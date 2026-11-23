@@ -76,4 +76,20 @@ public ResponseEntity<Map<String, Object>> handleInvalidArgument(
             .body(error);
 }
 
+
+@ExceptionHandler(DuplicateLicenseException.class)
+public ResponseEntity<Map<String, Object>> handleDuplicateLicense(
+        DuplicateLicenseException ex) {
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(
+            Map.of(
+                "timestamp", Instant.now().toString(),
+                "status", 409,
+                "error", "Conflict",
+                "message", ex.getMessage()
+            )
+    );
+}
+
+
 }

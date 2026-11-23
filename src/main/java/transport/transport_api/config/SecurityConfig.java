@@ -17,22 +17,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/orders")
-                        .permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/orders/*")
-                        .permitAll()
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/orders/*/status")
-                        .permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/orders")
-                        .permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/orders").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/orders/*").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/*/status").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/orders").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/drivers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/drivers").permitAll()
                         .anyRequest().authenticated());
 
         return http.build();
