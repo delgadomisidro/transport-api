@@ -91,5 +91,18 @@ public ResponseEntity<Map<String, Object>> handleDuplicateLicense(
     );
 }
 
+@ExceptionHandler(InvalidAssignmentException.class)
+public ResponseEntity<Map<String, Object>> handleInvalidAssignment(
+        InvalidAssignmentException ex) {
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(
+            Map.of(
+                "timestamp", Instant.now().toString(),
+                "status", 409,
+                "error", "Conflict",
+                "message", ex.getMessage()
+            )
+    );
+}
 
 }
