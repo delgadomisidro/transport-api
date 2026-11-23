@@ -15,14 +15,17 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    HttpMethod.POST,
-                    "/api/orders"
-                ).permitAll()
-                .anyRequest().authenticated()
-            );
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/orders")
+                        .permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/orders/*")
+                        .permitAll()
+                        .anyRequest().authenticated());
 
         return http.build();
     }
