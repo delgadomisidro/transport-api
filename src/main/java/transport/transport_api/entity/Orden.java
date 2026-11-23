@@ -31,6 +31,14 @@ public class Orden {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
+    public Long getVersion() {
+        return version;
+    }
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
