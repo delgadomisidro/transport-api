@@ -11,6 +11,13 @@ import transport.transport_api.entity.Orden;
 import transport.transport_api.enums.OrderStatus;
 import transport.transport_api.repository.OrderRepository;
 import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import transport.transport_api.enums.OrderStatus;
+import transport.transport_api.repository.specification.OrderSpecification;
 
 import transport.transport_api.exception.InvalidOrderStatusException;
 import transport.transport_api.exception.ResourceNotFoundException;
@@ -23,6 +30,7 @@ public class OrderService {
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
+
     /**
      * Creates a new order
      */
@@ -88,6 +96,35 @@ public class OrderService {
         orden.setStatus(next);
 
         return OrderResponse.from(orden);
+    }
+
+    /**
+     * Gets all orders matching the given criteria
+     */
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getOrders(
+            OrderStatus status,
+            String origin,
+            String destination,
+            LocalDateTime from,
+            LocalDateTime to) {
+
+        if (from != null && to != null && from.isAfter(to)) {
+            throw new IllegalArgumentException(
+                    "From date must not be after to date");
+        }
+
+        Specification<Orden> specification = Specification.where(
+                OrderSpecification.hasStatus(status))
+                .and(OrderSpecification.hasOrigin(origin))
+                .and(OrderSpecification.hasDestination(destination))
+                .and(OrderSpecification.createdAfter(from))
+                .and(OrderSpecification.createdBefore(to));
+
+        return orderRepository.findAll(specification)
+                .stream()
+                .map(OrderResponse::from)
+                .toList();
     }
 
 }

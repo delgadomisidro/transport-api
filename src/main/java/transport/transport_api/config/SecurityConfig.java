@@ -29,6 +29,10 @@ public class SecurityConfig {
                                 HttpMethod.PUT,
                                 "/api/orders/*/status")
                         .permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/orders")
+                        .permitAll()
                         .anyRequest().authenticated());
 
         return http.build();

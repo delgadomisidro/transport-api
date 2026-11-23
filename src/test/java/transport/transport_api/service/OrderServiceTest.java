@@ -21,6 +21,11 @@ import transport.transport_api.dto.UpdateOrderStatusRequest;
 import transport.transport_api.exception.InvalidOrderStatusException;
 import transport.transport_api.exception.ResourceNotFoundException;
 import transport.transport_api.repository.OrderRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+import org.mockito.ArgumentCaptor;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -123,7 +128,7 @@ void setOrderToCancelledTest() {
 }
 
 @Test
-void shouldRejectInvalidTransition() {
+void RejectInvalidTransitionTest() {
     Orden order = new Orden();
     order.setStatus(OrderStatus.DELIVERED);
 
@@ -145,7 +150,7 @@ void shouldRejectInvalidTransition() {
 }
 
 @Test
-void shouldRejectStatusUpdateWhenOrderDoesNotExist() {
+void RejectStatusUpdateWhenOrderDoesNotExist() {
     when(orderRepository.findById(orderId))
             .thenReturn(Optional.empty());
 
@@ -156,6 +161,73 @@ void shouldRejectStatusUpdateWhenOrderDoesNotExist() {
                     new UpdateOrderStatusRequest(OrderStatus.IN_TRANSIT)
             )
     );
+}
+
+
+@Test
+void ReturnOrdersWithoutFiltersTest() {
+
+    Orden first = new Orden();
+    first.setOrigen("CDMX");
+    first.setDestino("Puebla");
+
+    Orden second = new Orden();
+    second.setOrigen("Monterrey");
+    second.setDestino("Guadalajara");
+
+    when(orderRepository.findAll(
+            org.mockito.ArgumentMatchers
+                .<Specification<Orden>>any()))
+            .thenReturn(List.of(first, second));
+
+    List<OrderResponse> response = orderService.getOrders(
+            null, null, null, null, null
+    );
+
+    assertEquals(2, response.size());
+    assertEquals("CDMX", response.get(0).origin());
+    assertEquals("Monterrey", response.get(1).origin());
+
+    verify(orderRepository).findAll(
+            org.mockito.ArgumentMatchers
+                .<Specification<Orden>>any());
+}
+
+@Test
+void ReturnEmptyListWhenNoOrdersMatchTest() {
+
+    when(orderRepository.findAll(
+            org.mockito.ArgumentMatchers
+                .<Specification<Orden>>any()))
+            .thenReturn(List.of());
+
+    List<OrderResponse> response = orderService.getOrders(
+            OrderStatus.CREATED,
+            "CDMX",
+            null,
+            null,
+            null
+    );
+
+    assertTrue(response.isEmpty());
+}
+
+@Test
+void RejectInvalidDateRangeTest() {
+
+    LocalDateTime from =
+            LocalDateTime.of(2026, 11, 30, 0, 0);
+
+    LocalDateTime to =
+            LocalDateTime.of(2026, 11, 1, 0, 0);
+
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> orderService.getOrders(
+                    null, null, null, from, to)
+    );
+
+    verifyNoInteractions(orderRepository);
 }
 
 }
