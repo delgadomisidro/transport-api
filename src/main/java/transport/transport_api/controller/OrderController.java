@@ -13,6 +13,12 @@ import transport.transport_api.dto.CreateOrderRequest;
 import transport.transport_api.dto.OrderResponse;
 import transport.transport_api.dto.UpdateOrderStatusRequest;
 import transport.transport_api.service.OrderService;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import transport.transport_api.enums.OrderStatus;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -23,6 +29,7 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
+
     /*
      * Creates a new order
      */
@@ -38,6 +45,7 @@ public class OrderController {
                 .created(location)
                 .body(response);
     }
+
     /*
      * Gets order by id
      */
@@ -49,6 +57,7 @@ public class OrderController {
 
         return ResponseEntity.ok(response);
     }
+
     /*
      * Updates the status of an order
      */
@@ -60,6 +69,19 @@ public class OrderController {
         OrderResponse response = orderService.updateOrderStatus(id, request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getOrders(
+            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(required = false) String origin,
+            @RequestParam(required = false) String destination,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+
+        return ResponseEntity.ok(
+                orderService.getOrders(
+                        status, origin, destination, from, to));
     }
 
 }

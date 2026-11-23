@@ -60,4 +60,20 @@ public ResponseEntity<Map<String, Object>> handleConcurrencyConflict(
             .body(error);
 }
 
+@ExceptionHandler(IllegalArgumentException.class)
+public ResponseEntity<Map<String, Object>> handleInvalidArgument(
+        IllegalArgumentException ex) {
+
+    Map<String, Object> error = Map.of(
+        "timestamp", Instant.now().toString(),
+        "status", 400,
+        "error", "Bad Request",
+        "message", ex.getMessage()
+    );
+
+    return ResponseEntity
+            .badRequest()
+            .body(error);
+}
+
 }
