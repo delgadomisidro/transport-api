@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import transport.transport_api.enums.OrderStatus;
 import transport.transport_api.repository.specification.OrderSpecification;
 
 import transport.transport_api.exception.InvalidOrderStatusException;

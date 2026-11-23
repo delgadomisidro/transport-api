@@ -1,7 +1,6 @@
 
 package transport.transport_api.service;
 
-import java.sql.Driver;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
