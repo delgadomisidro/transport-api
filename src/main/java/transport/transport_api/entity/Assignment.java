@@ -31,6 +31,12 @@ public class Assignment {
     @Column(nullable = false, updatable = false)
     private LocalDateTime assignedAt;
 
+    @Column(name = "document_path")
+    private String documentPath;
+
+    @Column(name = "image_path")
+    private String imagePath;
+
     @PrePersist
     protected void onCreate() {
         assignedAt = LocalDateTime.now();
@@ -58,5 +64,21 @@ public class Assignment {
 
     public LocalDateTime getAssignedAt() {
         return assignedAt;
+    }
+
+    public String getDocumentPath() {
+        return documentPath;
+    }
+
+    public void setDocumentPath(String documentPath) {
+        this.documentPath = documentPath;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

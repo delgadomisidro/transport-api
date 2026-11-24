@@ -37,5 +37,8 @@ build/
 # Archivos compilados
 target/
 
+#files assignment
+uploads/
+
 ### VS Code ###
 .vscode/

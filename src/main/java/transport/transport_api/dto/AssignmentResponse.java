@@ -11,16 +11,22 @@ public record AssignmentResponse(
         UUID orderId,
         UUID driverId,
         String driverName,
-        LocalDateTime assignedAt
+        LocalDateTime assignedAt,
+        String documentPath,
+        String imagePath
 ) {
 
-    public static AssignmentResponse from(Assignment assignment) {
+    public static AssignmentResponse from(
+            Assignment assignment) {
+
         return new AssignmentResponse(
                 assignment.getId(),
                 assignment.getOrder().getId(),
                 assignment.getDriver().getId(),
                 assignment.getDriver().getName(),
-                assignment.getAssignedAt()
+                assignment.getAssignedAt(),
+                assignment.getDocumentPath(),
+                assignment.getImagePath()
         );
     }
 }
