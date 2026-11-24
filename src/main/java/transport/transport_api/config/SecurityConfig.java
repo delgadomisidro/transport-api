@@ -24,6 +24,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/api/drivers").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/drivers").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/orders/*/assignments").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/orders/*/assignments/*/attachments").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/orders/*/assignments/*").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/orders/*/assignments/*/attachments/*").permitAll()
                         .anyRequest().authenticated());
 
         return http.build();
