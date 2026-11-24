@@ -9,6 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -104,5 +111,20 @@ public ResponseEntity<Map<String, Object>> handleInvalidAssignment(
             )
     );
 }
+
+
+@ExceptionHandler(AuthenticationException.class)
+public ResponseEntity<Map<String, Object>> handleAuthentication(
+        AuthenticationException ex) {
+
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(Map.of(
+            "timestamp", LocalDateTime.now(),
+            "status", 401,
+            "error", "Unauthorized",
+            "message", "Authentication failed"
+        ));
+}
+
 
 }

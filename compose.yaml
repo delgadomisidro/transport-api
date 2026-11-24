@@ -29,6 +29,9 @@ services:
       DB_USER: postgres
       DB_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD}
       STORAGE_LOCATION: /app/uploads
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET}
+      API_USERNAME: ${API_USERNAME:-admin}
+      API_PASSWORD: ${API_PASSWORD:?Define API_PASSWORD}
     ports:
       - "8082:8083"
     volumes:
