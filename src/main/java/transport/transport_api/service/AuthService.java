@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import transport.transport_api.dto.LoginRequest;
 import transport.transport_api.dto.LoginResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AuthService {
@@ -27,6 +29,7 @@ public class AuthService {
     private final JwtEncoder jwtEncoder;
     private final long expiration;
     private final String issuer;
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     public AuthService(
             AuthenticationManager authenticationManager,
@@ -42,35 +45,35 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
 
-        Authentication authentication =
-            authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    request.username(),
-                    request.password()
-                )
-            );
+                        request.username(),
+                        request.password()));
 
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-            .issuer(issuer)
-            .issuedAt(now)
-            .expiresAt(now.plusSeconds(expiration))
-            .subject(authentication.getName())
-            .build();
+                .issuer(issuer)
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(expiration))
+                .subject(authentication.getName())
+                .build();
 
         JwsHeader header = JwsHeader
-            .with(MacAlgorithm.HS256)
-            .build();
+                .with(MacAlgorithm.HS256)
+                .build();
 
         String token = jwtEncoder.encode(
-            JwtEncoderParameters.from(header, claims)
-        ).getTokenValue();
+                JwtEncoderParameters.from(header, claims)).getTokenValue();
+
+        log.atInfo()
+                .addKeyValue("event", "authentication_success")
+                .addKeyValue("username", authentication.getName())
+                .log("User authenticated successfully");
 
         return new LoginResponse(
-            token,
-            "Bearer",
-            expiration
-        );
+                token,
+                "Bearer",
+                expiration);
     }
 }
