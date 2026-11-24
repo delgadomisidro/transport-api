@@ -21,11 +21,14 @@ import java.nio.file.Path;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AssignmentService {
 
         private final AssignmentRepository assignmentRepository;
+        private static final Logger log = LoggerFactory.getLogger(AssignmentService.class);
         private final OrderRepository orderRepository;
         private final DriverRepository driverRepository;
         private final FileStorageService fileStorageService;
@@ -75,6 +78,12 @@ public class AssignmentService {
                 assignment.setDriver(driver);
 
                 Assignment saved = assignmentRepository.save(assignment);
+
+                log.atInfo()
+                                .addKeyValue("event", "driver_assigned")
+                                .addKeyValue("orderId", order.getId())
+                                .addKeyValue("driverId", driver.getId())
+                                .log("Driver assigned to order");
 
                 return AssignmentResponse.from(saved);
         }
@@ -130,6 +139,12 @@ public class AssignmentService {
                 assignment.setImagePath(imagePath);
 
                 assignmentRepository.saveAndFlush(assignment);
+
+                log.atInfo()
+                                .addKeyValue("event", "attachments_saved")
+                                .addKeyValue("assignmentId", assignmentId)
+                                .addKeyValue("orderId", orderId)
+                                .log("Assignment attachments saved");
 
                 return AssignmentResponse.from(assignment);
         }

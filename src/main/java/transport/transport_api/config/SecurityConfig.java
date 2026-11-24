@@ -42,10 +42,10 @@ public class SecurityConfig {
             @Value("${app.security.password}") String password) {
 
         UserDetails user = User
-            .withUsername(username)
-            .password(passwordEncoder.encode(password))
-            .roles("USER")
-            .build();
+                .withUsername(username)
+                .password(passwordEncoder.encode(password))
+                .roles("USER")
+                .build();
 
         return new InMemoryUserDetailsManager(user);
     }
@@ -55,8 +55,7 @@ public class SecurityConfig {
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
 
-        DaoAuthenticationProvider provider =
-            new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
 
         provider.setPasswordEncoder(passwordEncoder);
 
@@ -68,31 +67,32 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
-            .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
 
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS
-                )
-            )
+                .sessionManagement(session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
 
-            .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
 
-                .dispatcherTypeMatchers(
-                    DispatcherType.ERROR
-                ).permitAll()
+                        .dispatcherTypeMatchers(
+                                DispatcherType.ERROR)
+                        .permitAll()
 
-                .requestMatchers(
-                    HttpMethod.POST,
-                    "/api/auth/login"
-                ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/auth/login")
+                        .permitAll()
 
-                .anyRequest().authenticated()
-            )
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**")
+                        .permitAll()
 
-            .oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(Customizer.withDefaults())
-            );
+                        .anyRequest().authenticated())
+
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

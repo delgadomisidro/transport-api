@@ -29,7 +29,7 @@ public final class OrderSpecification {
                 origin == null || origin.isBlank()
                         ? cb.conjunction()
                         : cb.like(
-                            cb.lower(root.get("origin")),
+                            cb.lower(root.get("origen")),
                             "%" + origin.toLowerCase() + "%"
                         );
     }
@@ -41,7 +41,7 @@ public final class OrderSpecification {
                 destination == null || destination.isBlank()
                         ? cb.conjunction()
                         : cb.like(
-                            cb.lower(root.get("destination")),
+                            cb.lower(root.get("destino")),
                             "%" + destination.toLowerCase() + "%"
                         );
     }

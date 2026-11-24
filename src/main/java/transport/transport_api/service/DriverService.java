@@ -11,11 +11,14 @@ import transport.transport_api.dto.DriverResponse;
 import transport.transport_api.entity.Conductor;
 import transport.transport_api.exception.DuplicateLicenseException;
 import transport.transport_api.repository.DriverRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class DriverService {
 
     private final DriverRepository driverRepository;
+    private static final Logger log = LoggerFactory.getLogger(DriverService.class);
 
     public DriverService(DriverRepository driverRepository) {
         this.driverRepository = driverRepository;
@@ -38,6 +41,10 @@ public class DriverService {
         driver.setActive(true);
 
         Conductor saved = driverRepository.save(driver);
+        log.atInfo()
+                .addKeyValue("event", "driver_created")
+                .addKeyValue("driverId", saved.getId())
+                .log("Driver created successfully");
 
         return DriverResponse.from(saved);
     }

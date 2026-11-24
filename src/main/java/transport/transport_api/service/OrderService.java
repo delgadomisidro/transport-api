@@ -20,11 +20,14 @@ import transport.transport_api.repository.specification.OrderSpecification;
 
 import transport.transport_api.exception.InvalidOrderStatusException;
 import transport.transport_api.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
@@ -43,6 +46,11 @@ public class OrderService {
         orden.setDestino(request.destination());
 
         Orden savedOrder = orderRepository.save(orden);
+        log.atInfo()
+                .addKeyValue("event", "order_created")
+                .addKeyValue("orderId", savedOrder.getId())
+                .addKeyValue("status", savedOrder.getStatus())
+                .log("Order created successfully");
 
         return OrderResponse.from(savedOrder);
     }
@@ -93,6 +101,11 @@ public class OrderService {
         }
 
         orden.setStatus(next);
+        log.atInfo()
+                .addKeyValue("event", "order_status_updated")
+                .addKeyValue("orderId", orden.getId())
+                .addKeyValue("newStatus", orden.getStatus())
+                .log("Order status updated");
 
         return OrderResponse.from(orden);
     }
